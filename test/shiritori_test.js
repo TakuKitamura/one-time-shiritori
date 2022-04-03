@@ -63,3 +63,25 @@ contract("when word is set by the not-owner", (accounts) => {
         assert.equal(false, "setFirstWord should not be called by non-owner");
     });
 });
+
+contract("say next word", (accounts) => {
+    it("しりとり,りんご,ごりら", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firstWord = "しりとり";
+        await shiritori.setFirstWord(firstWord, {
+            from: accounts[0]
+        });
+        await shiritori.sayNextWord("りんご", {
+            from: accounts[1]
+        });
+        await shiritori.sayNextWord("ごりら", {
+            from: accounts[0]
+        });
+        const history = await shiritori.history({
+            from: accounts[0]
+        });
+
+        assert.equal(history, "しりとり,りんご,ごりら");
+    })
+
+});
