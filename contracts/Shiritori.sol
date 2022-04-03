@@ -18,8 +18,8 @@ contract Shiritori is Ownable {
 
     // contract-owner can set shiritori-history only once
     function setFirstWord(string calldata word) external onlyOwner {
-        bool isEmptyWord = getBytesLength(_history) == 0;
-        if (isEmptyWord) {
+        bool isEmptyHistory = getBytesLength(_history) == 0;
+        if (isEmptyHistory) {
             // set first word on storage
             _history = word;
         }
