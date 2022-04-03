@@ -24,4 +24,11 @@ contract Shiritori is Ownable {
             _history = word;
         }
     }
+
+    function sayNextWord(string calldata word) external {
+        bool wordsAreSet = getBytesLength(_history) > 0;
+        if (wordsAreSet) {
+            _history = string(bytes.concat(bytes(_history), ",", bytes(word)));
+        }
+    }
 }

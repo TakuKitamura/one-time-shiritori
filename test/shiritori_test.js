@@ -65,26 +65,24 @@ contract("ShiritoriTest", function (accounts) {
         });
     });
 
-    describe("get shiritori history", () => {
-        const firstWord = "しりとり";
-        it("get first word by owner", async () => {
+    describe("say next word", () => {
+        it("しりとり→りんご→ごりら", async () => {
             const shiritori = await Shiritori.deployed()
+            const firstWord = "しりとり";
             await shiritori.setFirstWord(firstWord, {
                 from: ownerAddress
             });
-            await shiritori.history({
-                from: ownerAddress
-            });
-        })
-        it("get first word by not-owner", async () => {
-            const shiritori = await Shiritori.deployed()
-            await shiritori.setFirstWord(firstWord, {
-                from: ownerAddress
-            });
-            await shiritori.history({
+            await shiritori.sayNextWord("りんご", {
                 from: notOwnerAddress
             });
-        })
+            await shiritori.sayNextWord("ごりら", {
+                from: ownerAddress
+            });
+            const history = await shiritori.history({
+                from: ownerAddress
+            });
 
+            assert.equal(history, "しりとり,りんご,ごりら");
+        })
     });
 });
