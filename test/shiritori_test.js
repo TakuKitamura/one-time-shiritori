@@ -1,4 +1,4 @@
-const ShiritoriTest = artifacts.require("ShiritoriTest");
+const Shiritori = artifacts.require("Shiritori");
 
 /*
  * uncomment accounts to access the test accounts made available by the
@@ -7,7 +7,7 @@ const ShiritoriTest = artifacts.require("ShiritoriTest");
  */
 contract("ShiritoriTest", function (/* accounts */) {
   it("should assert true", async function () {
-    await ShiritoriTest.deployed();
+    await Shiritori.deployed();
     return assert.isTrue(true);
   });
 });
