@@ -31,4 +31,15 @@ contract Shiritori is Ownable {
             _history = string(bytes.concat(bytes(_history), ",", bytes(word)));
         }
     }
+
+    // TODO: hiragana validation check
+    // slice hiragana string with begin and end index
+    function hiraganaSlice(
+        string calldata hiragana,
+        uint256 begin,
+        uint256 end
+    ) external pure returns (string calldata) {
+        bytes calldata hiraganaBytes = bytes(hiragana);
+        return string(hiraganaBytes[begin:end]);
+    }
 }

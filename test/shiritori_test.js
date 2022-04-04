@@ -85,3 +85,33 @@ contract("say next word", (accounts) => {
     })
 
 });
+
+contract("string manipulation", (accounts) => {
+
+    it("getFirstHiragana", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firsthiragana = await shiritori.hiraganaSlice("あいう", 0, 3, {
+            from: accounts[0],
+        });
+        assert.equal("あ", firsthiragana);
+
+    });
+
+    it("getCenterHiragana", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firsthiragana = await shiritori.hiraganaSlice("あいう", 3, 6, {
+            from: accounts[0],
+        });
+        assert.equal("い", firsthiragana);
+
+    });
+
+    it("getLastHiragana", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firsthiragana = await shiritori.hiraganaSlice("あいう", 6, 9, {
+            from: accounts[0]
+        });
+        assert.equal("う", firsthiragana);
+
+    });
+})
