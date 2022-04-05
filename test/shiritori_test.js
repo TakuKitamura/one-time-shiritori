@@ -19,7 +19,7 @@ contract("when first word is set by the owner", (accounts) => {
         await shiritori.setFirstWord(firstWord, {
             from: accounts[0]
         });
-        const history = await shiritori.history({
+        const history = await shiritori.getHistory({
             from: accounts[0]
         });
         assert.equal(history, firstWord, "first word was not set");
@@ -36,7 +36,7 @@ contract("when first word is set by the owner", (accounts) => {
         await shiritori.setFirstWord("りんご", {
             from: accounts[0]
         });
-        history = await shiritori.history({
+        history = await shiritori.getHistory({
             from: accounts[0]
         });
         assert.equal(history, firstWord, "don't set to the second word");
@@ -72,7 +72,7 @@ contract("say next word", (accounts) => {
         await shiritori.sayNextWord("ごりら", {
             from: accounts[0]
         });
-        const history = await shiritori.history({
+        const history = await shiritori.getHistory({
             from: accounts[0]
         });
 

@@ -18,7 +18,7 @@ contract Shiritori is Ownable {
     }
 
     // get shiritori history
-    function history() external view returns (string[] memory) {
+    function getHistory() external view returns (string[] memory) {
         return _history;
     }
 
