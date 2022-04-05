@@ -88,7 +88,7 @@ contract("say next word", (accounts) => {
 
 contract("string manipulation", (accounts) => {
 
-    it("getFirstHiragana", async () => {
+    it("getFirstHiragana with hiraganaSlice func", async () => {
         const shiritori = await Shiritori.deployed()
         const firsthiragana = await shiritori.hiraganaSliceTest("あいう", 0, 3, {
             from: accounts[0],
@@ -97,7 +97,7 @@ contract("string manipulation", (accounts) => {
 
     });
 
-    it("getCenterHiragana", async () => {
+    it("getCenterHiragana with hiraganaSlice func", async () => {
         const shiritori = await Shiritori.deployed()
         const firsthiragana = await shiritori.hiraganaSliceTest("あいう", 3, 6, {
             from: accounts[0],
@@ -106,9 +106,18 @@ contract("string manipulation", (accounts) => {
 
     });
 
-    it("getLastHiragana", async () => {
+    it("getLastHiragana with hiraganaSlice func", async () => {
         const shiritori = await Shiritori.deployed()
         const firsthiragana = await shiritori.hiraganaSliceTest("あいう", 6, 9, {
+            from: accounts[0]
+        });
+        assert.equal("う", firsthiragana);
+
+    });
+
+    it("getLastHiraganaTest", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firsthiragana = await shiritori.getLastHiraganaTest("あいう", {
             from: accounts[0]
         });
         assert.equal("う", firsthiragana);

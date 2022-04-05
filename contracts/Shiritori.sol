@@ -43,12 +43,43 @@ contract Shiritori is Ownable {
         return string(hiraganaBytes[begin:end]);
     }
 
-    // TODO: MUST comment out this function when deploying
+    function getLastHiragana(string calldata word)
+        private
+        pure
+        returns (string memory)
+    {
+        return
+            hiraganaSlice(word, getBytesLength(word) - 3, getBytesLength(word));
+    }
+
+    function strEqual(string memory str1, string memory str2)
+        private
+        pure
+        returns (bool)
+    {
+        return keccak256(bytes(str1)) == keccak256(bytes(str2));
+    }
+
+    function lastWordIsNN(string calldata word) external pure returns (bool) {
+        string memory lastHiragana = getLastHiragana(word);
+        return strEqual(lastHiragana, unicode"ん");
+    }
+
+    // TODO: MUST comment out this function for testing purposes only when deploying
     function hiraganaSliceTest(
         string calldata hiragana,
         uint256 begin,
         uint256 end
     ) external pure returns (string calldata) {
         return hiraganaSlice(hiragana, begin, end);
+    }
+
+    // TODO: MUST comment out this function for testing purposes only when deploying
+    function getLastHiraganaTest(string calldata word)
+        external
+        pure
+        returns (string memory)
+    {
+        return getLastHiragana(word);
     }
 }
