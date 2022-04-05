@@ -38,8 +38,17 @@ contract Shiritori is Ownable {
         string calldata hiragana,
         uint256 begin,
         uint256 end
-    ) external pure returns (string calldata) {
+    ) private pure returns (string calldata) {
         bytes calldata hiraganaBytes = bytes(hiragana);
         return string(hiraganaBytes[begin:end]);
+    }
+
+    // TODO: MUST comment out this function when deploying
+    function hiraganaSliceTest(
+        string calldata hiragana,
+        uint256 begin,
+        uint256 end
+    ) external pure returns (string calldata) {
+        return hiraganaSlice(hiragana, begin, end);
     }
 }
