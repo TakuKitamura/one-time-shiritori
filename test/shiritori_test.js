@@ -22,7 +22,6 @@ contract("when first word is set by the owner", (accounts) => {
         const history = await shiritori.history({
             from: accounts[0]
         });
-
         assert.equal(history, firstWord, "first word was not set");
     });
 });
@@ -34,16 +33,13 @@ contract("when first word is set by the owner", (accounts) => {
         await shiritori.setFirstWord(firstWord, {
             from: accounts[0],
         });
-
         await shiritori.setFirstWord("りんご", {
             from: accounts[0]
         });
         history = await shiritori.history({
             from: accounts[0]
         });
-
         assert.equal(history, firstWord, "don't set to the second word");
-
     });
 });
 
@@ -59,7 +55,6 @@ contract("when word is set by the not-owner", (accounts) => {
             assert(error.reason, errorMessage, "error-reason is not expected");
             return
         }
-
         assert.equal(false, "setFirstWord should not be called by non-owner");
     });
 });
@@ -83,7 +78,6 @@ contract("say next word", (accounts) => {
 
         assert.equal(history, "しりとり,りんご,ごりら");
     })
-
 });
 
 contract("string manipulation", (accounts) => {
@@ -94,7 +88,6 @@ contract("string manipulation", (accounts) => {
             from: accounts[0],
         });
         assert.equal("あ", firsthiragana);
-
     });
 
     it("getCenterHiragana with hiraganaSlice func", async () => {
@@ -103,7 +96,6 @@ contract("string manipulation", (accounts) => {
             from: accounts[0],
         });
         assert.equal("い", firsthiragana);
-
     });
 
     it("getLastHiragana with hiraganaSlice func", async () => {
@@ -112,7 +104,6 @@ contract("string manipulation", (accounts) => {
             from: accounts[0]
         });
         assert.equal("う", firsthiragana);
-
     });
 
     it("getLastHiraganaTest", async () => {
@@ -121,6 +112,5 @@ contract("string manipulation", (accounts) => {
             from: accounts[0]
         });
         assert.equal("う", firsthiragana);
-
     });
 })

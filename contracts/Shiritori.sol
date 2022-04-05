@@ -25,6 +25,7 @@ contract Shiritori is Ownable {
         }
     }
 
+    // update shiritori history
     function sayNextWord(string calldata word) external {
         bool wordsAreSet = getBytesLength(_history) > 0;
         if (wordsAreSet) {
@@ -60,6 +61,7 @@ contract Shiritori is Ownable {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 
+    // check last hiragana is "ん"
     function lastWordIsNN(string calldata word) external pure returns (bool) {
         string memory lastHiragana = getLastHiragana(word);
         return strEqual(lastHiragana, unicode"ん");
