@@ -25,11 +25,14 @@ contract Shiritori is Ownable {
         }
     }
 
+    event sayNextWordEvent(string word);
+
     // update shiritori history
     function sayNextWord(string calldata word) external {
         bool wordsAreSet = _history.length > 0;
         if (wordsAreSet) {
             _history.push(word);
+            emit sayNextWordEvent(word);
         }
     }
 
@@ -62,7 +65,11 @@ contract Shiritori is Ownable {
     }
 
     // check last hiragana is "ん"
-    function lastHiraganaIsNN(string calldata word) private pure returns (bool) {
+    function lastHiraganaIsNN(string calldata word)
+        private
+        pure
+        returns (bool)
+    {
         string memory lastHiragana = getLastHiragana(word);
         return strEqual(lastHiragana, unicode"ん");
     }

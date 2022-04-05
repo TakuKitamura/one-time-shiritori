@@ -78,6 +78,20 @@ contract("say next word", (accounts) => {
 
         assert.equal(history, "しりとり,りんご,ごりら");
     })
+
+    it("receive event", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firstWord = "しりとり";
+        await shiritori.setFirstWord(firstWord, {
+            from: accounts[0]
+        });
+        const transaction = await shiritori.sayNextWord("りんご", {
+            from: accounts[1]
+        });
+        console.log(transaction.logs[0].args[0]);
+        assert.equal(transaction.logs[0].args[0], "りんご", "event is not received");
+
+    })
 });
 
 contract("string manipulation", (accounts) => {
