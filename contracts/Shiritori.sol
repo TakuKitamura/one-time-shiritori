@@ -62,7 +62,7 @@ contract Shiritori is Ownable {
     }
 
     // check last hiragana is "ん"
-    function lastWordIsNN(string calldata word) external pure returns (bool) {
+    function lastWordIsNN(string calldata word) private pure returns (bool) {
         string memory lastHiragana = getLastHiragana(word);
         return strEqual(lastHiragana, unicode"ん");
     }
