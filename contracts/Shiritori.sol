@@ -22,8 +22,26 @@ contract Shiritori is Ownable {
         return _history;
     }
 
+    // check shiritori history duplicate element
+    function checkDuplicateHistory(string[] memory history, string memory word)
+        private
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < history.length; i++) {
+            if (strEqual(history[i], word) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // contract-owner can set shiritori-history only once
-    function setFirstWord(string calldata word) external checkGameOver onlyOwner {
+    function setFirstWord(string calldata word)
+        external
+        checkGameOver
+        onlyOwner
+    {
         bool isEmptyHistory = _history.length == 0;
         if (isEmptyHistory) {
             // set first word on storage
@@ -96,5 +114,10 @@ contract Shiritori is Ownable {
         returns (string memory)
     {
         return getLastHiragana(word);
+    }
+
+    // TODO: MUST comment out this function for testing purposes only when deploying
+    function checkDuplicateHistoryTest(string[] memory history, string memory word) external pure returns (bool) {
+        return checkDuplicateHistory(history, word);
     }
 }

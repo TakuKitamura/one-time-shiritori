@@ -127,4 +127,18 @@ contract("string manipulation", (accounts) => {
         });
         assert.equal("う", firsthiragana);
     });
+
+    it("checkDuplicateHistoryTest", async () => {
+        const shiritori = await Shiritori.deployed()
+        let isDuplicate = await shiritori.checkDuplicateHistoryTest(["しりとり", "りんご", "ごりら", "らいす", "すり"], "りんご", {
+            from: accounts[0]
+        });
+        assert.equal(true, isDuplicate, "isDuplicate must be true");
+
+        isDuplicate = await shiritori.checkDuplicateHistoryTest(["しりとり", "りんご", "ごりら", "らいす", "すり"], "りす", {
+            from: accounts[0]
+        });
+        assert.equal(false, isDuplicate, "isDuplicate must be false");
+
+    })
 })
