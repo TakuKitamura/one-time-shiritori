@@ -5,6 +5,12 @@ import "openzeppelin-solidity/contracts/access/Ownable.sol";
 
 contract Shiritori is Ownable {
     string[] private _history;
+    bool private _isGameOver = false;
+
+    modifier checkGameOver() {
+        require(_isGameOver == false, "Game Over!");
+        _;
+    }
 
     // get string bytes length
     function getBytesLength(string memory str) private pure returns (uint256) {
@@ -17,7 +23,7 @@ contract Shiritori is Ownable {
     }
 
     // contract-owner can set shiritori-history only once
-    function setFirstWord(string calldata word) external onlyOwner {
+    function setFirstWord(string calldata word) external checkGameOver onlyOwner {
         bool isEmptyHistory = _history.length == 0;
         if (isEmptyHistory) {
             // set first word on storage
@@ -28,7 +34,7 @@ contract Shiritori is Ownable {
     event sayNextWordEvent(string word);
 
     // update shiritori history
-    function sayNextWord(string calldata word) external {
+    function sayNextWord(string calldata word) external checkGameOver {
         bool wordsAreSet = _history.length > 0;
         if (wordsAreSet) {
             _history.push(word);
