@@ -36,6 +36,8 @@ contract Shiritori is Ownable {
         return false;
     }
 
+    event sayNextWordEvent(string word);
+
     // contract-owner can set shiritori-history only once
     function setFirstWord(string calldata word)
         external
@@ -44,19 +46,35 @@ contract Shiritori is Ownable {
     {
         bool isEmptyHistory = _history.length == 0;
         if (isEmptyHistory) {
+            emit sayNextWordEvent(word);
+
+            // game over
+            if (lastHiraganaIsNN(word) == true) {
+                _isGameOver = true;
+                _history.push(word);
+                return;
+            }
             // set first word on storage
             _history.push(word);
         }
     }
 
-    event sayNextWordEvent(string word);
-
     // update shiritori history
     function sayNextWord(string calldata word) external checkGameOver {
         bool wordsAreSet = _history.length > 0;
         if (wordsAreSet) {
-            _history.push(word);
             emit sayNextWordEvent(word);
+
+            // game over
+            if (
+                lastHiraganaIsNN(word) == true ||
+                checkDuplicateHistory(_history, word) == true
+            ) {
+                _isGameOver = true;
+                _history.push(word);
+                return;
+            }
+            _history.push(word);
         }
     }
 
@@ -117,7 +135,10 @@ contract Shiritori is Ownable {
     }
 
     // TODO: MUST comment out this function for testing purposes only when deploying
-    function checkDuplicateHistoryTest(string[] memory history, string memory word) external pure returns (bool) {
+    function checkDuplicateHistoryTest(
+        string[] memory history,
+        string memory word
+    ) external pure returns (bool) {
         return checkDuplicateHistory(history, word);
     }
 }

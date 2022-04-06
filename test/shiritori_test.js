@@ -52,7 +52,7 @@ contract("when word is set by the not-owner", (accounts) => {
             });
         } catch (error) {
             const errorMessage = "Ownable: caller is not the owner"
-            assert(error.reason, errorMessage, "error-reason is not expected");
+            assert.equal(error.reason, errorMessage, "error-reason is not expected");
             return
         }
         assert.equal(false, "setFirstWord should not be called by non-owner");
@@ -88,9 +88,7 @@ contract("say next word", (accounts) => {
         const transaction = await shiritori.sayNextWord("りんご", {
             from: accounts[1]
         });
-        console.log(transaction.logs[0].args[0]);
         assert.equal(transaction.logs[0].args[0], "りんご", "event is not received");
-
     })
 });
 
@@ -140,5 +138,73 @@ contract("string manipulation", (accounts) => {
         });
         assert.equal(false, isDuplicate, "isDuplicate must be false");
 
+    })
+})
+
+contract("shiritori join test1", (accounts) => {
+    it("しりとり りんご ごはん", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firstWord = "しりとり";
+        await shiritori.setFirstWord(firstWord, {
+            from: accounts[0]
+        });
+        await shiritori.sayNextWord("りんご", {
+            from: accounts[1]
+        });
+        await shiritori.sayNextWord("ごはん", {
+            from: accounts[2]
+        });
+
+        const history = await shiritori.getHistory({
+            from: accounts[0]
+        });
+
+        assert.equal("しりとり,りんご,ごはん", history);
+
+    })
+})
+
+contract("shiritori join test2", (accounts) => {
+    it("しりとり りんご ごはん んじゃめな", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firstWord = "しりとり";
+        await shiritori.setFirstWord(firstWord, {
+            from: accounts[0]
+        });
+        await shiritori.sayNextWord("りんご", {
+            from: accounts[1]
+        });
+        await shiritori.sayNextWord("ごはん", {
+            from: accounts[2]
+        });
+
+
+        try {
+            await shiritori.sayNextWord("んじゃめな", {
+                from: accounts[3]
+            });
+        } catch (error) {
+            assert.equal("Game Over!", error.reason, "error-reason is not expected");
+            return
+        }
+        assert.equal(false, "this game is not game over");
+    })
+})
+
+contract("shiritori join test3", (accounts) => {
+    it("みかん んじゃめな", async () => {
+        const shiritori = await Shiritori.deployed()
+        await shiritori.setFirstWord("みかん", {
+            from: accounts[0]
+        });
+        try {
+            await shiritori.sayNextWord("んじゃめな", {
+                from: accounts[1]
+            });
+        } catch (error) {
+            assert.equal("Game Over!", error.reason, "error-reason is not expected");
+            return
+        }
+        assert.equal(false, "this game is not game over");
     })
 })
