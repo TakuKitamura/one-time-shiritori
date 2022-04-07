@@ -55,6 +55,15 @@ contract Shiritori is Ownable {
         }
     }
 
+    function checkWordConnection(
+        string memory beforeWord,
+        string memory nextWord
+    ) private pure returns (bool) {
+        string memory beforeLastHiragana = getLastHiragana(beforeWord);
+        string memory nextFirstHiragana = getFirstHiragana(nextWord);
+        return strEqual(beforeLastHiragana, nextFirstHiragana);
+    }
+
     function getLastWord(string[] memory history)
         private
         pure
@@ -74,7 +83,7 @@ contract Shiritori is Ownable {
         bool haveWordConnection = strEqual(beforeWordLast, nextWordFirst);
 
         if (wordsAreSet && haveWordConnection) {
-
+            emit sayNextWordEvent(word);
             // game over
             if (
                 lastHiraganaIsNN(word) == true ||
@@ -142,6 +151,14 @@ contract Shiritori is Ownable {
         return hiraganaSlice(hiragana, begin, end);
     }
 
+    function getFirstHiraganaTest(string memory word)
+        external
+        pure
+        returns (string memory)
+    {
+        return getFirstHiragana(word);
+    }
+
     // TODO: MUST comment out this function for testing purposes only when deploying
     function getLastHiraganaTest(string memory word)
         external
@@ -157,5 +174,13 @@ contract Shiritori is Ownable {
         string memory word
     ) external pure returns (bool) {
         return checkDuplicateHistory(history, word);
+    }
+
+    // TODO: MUST comment out this function for testing purposes only when deploying
+    function checkWordConnectionTest(
+        string memory beforeWord,
+        string memory nextWord
+    ) external pure returns (bool) {
+        return checkWordConnection(beforeWord, nextWord);
     }
 }

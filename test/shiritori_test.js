@@ -78,8 +78,10 @@ contract("say next word", (accounts) => {
 
         assert.equal(history, "しりとり,りんご,ごりら");
     })
+});
 
-    it("receive event", async () => {
+contract("receive event", (accounts) => {
+    it("receive say next word event", async () => {
         const shiritori = await Shiritori.deployed()
         const firstWord = "しりとり";
         await shiritori.setFirstWord(firstWord, {
@@ -88,6 +90,11 @@ contract("say next word", (accounts) => {
         const transaction = await shiritori.sayNextWord("りんご", {
             from: accounts[1]
         });
+        const history = await shiritori.getHistory({
+            from: accounts[0]
+        });
+
+        console.log(history);
         assert.equal(transaction.logs[0].args[0], "りんご", "event is not received");
     })
 });
@@ -118,6 +125,14 @@ contract("string manipulation", (accounts) => {
         assert.equal("う", firsthiragana);
     });
 
+    it("getFirstHiraganaTest", async () => {
+        const shiritori = await Shiritori.deployed()
+        const firsthiragana = await shiritori.getFirstHiraganaTest("あいう", {
+            from: accounts[0]
+        });
+        assert.equal("あ", firsthiragana);
+    });
+
     it("getLastHiraganaTest", async () => {
         const shiritori = await Shiritori.deployed()
         const firsthiragana = await shiritori.getLastHiraganaTest("あいう", {
@@ -137,8 +152,13 @@ contract("string manipulation", (accounts) => {
             from: accounts[0]
         });
         assert.equal(false, isDuplicate, "isDuplicate must be false");
-
     })
+
+    it("getLastHiraganaTest", async () => {
+        const shiritori = await Shiritori.deployed()
+        const haveWordConnection = await shiritori.checkWordConnectionTest("あか", "かさ");
+        assert.equal(true, haveWordConnection, "haveWordConnection must be true");
+    });
 })
 
 contract("shiritori join test1", (accounts) => {
@@ -206,5 +226,31 @@ contract("shiritori join test3", (accounts) => {
             return
         }
         assert.equal(false, "this game is not game over");
+    })
+})
+
+contract("shiritori join test4", (accounts) => {
+    it("しりとり りんご", async () => {
+        const shiritori = await Shiritori.deployed()
+        await shiritori.setFirstWord("しりとり", {
+            from: accounts[0]
+        });
+        await shiritori.sayNextWord("あり", {
+            from: accounts[1]
+        });
+
+        await shiritori.sayNextWord("かさ", {
+            from: accounts[2]
+        });
+
+        await shiritori.sayNextWord("りんご", {
+            from: accounts[3]
+        });
+
+        const history = await shiritori.getHistory({
+            from: accounts[4]
+        });
+
+        assert.equal("しりとり,りんご", history);
     })
 })
