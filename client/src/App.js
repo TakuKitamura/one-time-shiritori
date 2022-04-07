@@ -5,7 +5,7 @@ import getWeb3 from "./utils/getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { history: [123], inputWord:'', web3: null, accounts: null, contract: null };
+  state = { history: [], inputWord:'', isGameOver: false, web3: null, accounts: null, contract: null, error: '' };
 
   componentDidMount = async () => {
     try {
@@ -33,18 +33,23 @@ class App extends Component {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
       );
-      console.error(error);
     }
   };
 
+  getGameOverStatus = async () => {
+    const { contract } = this.state;
+    const isGameOver = await contract.methods.getGameOverStatus().call();
+    this.setState({isGameOver: isGameOver})
+    return isGameOver
+  }
+
   setShiritoriHisory = async () => {
-    const { accounts, contract } = this.state;
+    const { contract } = this.state;
     const history = await contract.methods.getHistory().call()
-    this.setState({history: history})
-    console.log(contract.events);
-    contract.events.allEvents({}, (err, event) => {
-        console.log(`event called: ${event.event}`);
-        console.log(JSON.stringify(event, null, "    "));
+    const isGameOver = await this.getGameOverStatus()
+    this.setState({history: history, isGameOver: isGameOver})
+    contract.events.NextTurnEvent({}, (err, event) => {
+        this.setState({history: event['returnValues']['word'], inputWord:''})
     });
   };
 
@@ -55,20 +60,18 @@ class App extends Component {
 
   formSubmitHandler = async (e) => {
     e.preventDefault();
-    const { accounts, contract, word } = this.state;
-    // console.log(accounts, contract, word, contract.methods.setGreeting)
-
+    const { accounts, contract, inputWord } = this.state;
     const history = await contract.methods.getHistory().call()
+
+    // set new word
     if (history.length === 0){
-        const updatedWord = await contract.methods.setFirstWord(word).send({from: accounts[0]});
-        const history = await contract.methods.getHistory().call()
-        this.setState({ history: history })
-        
-    } else {
-        const updatedWord = await contract.methods.sayNextWord(word).send({from: accounts[0]});
-        const history = await contract.methods.getHistory().call()
-        this.setState({ history: history })
+        await contract.methods.setFirstWord(inputWord).send({from: accounts[0]});
+    } else { // set next word
+        await contract.methods.sayNextWord(inputWord).send({from: accounts[0]})
     }
+
+    const isGameOver = await this.getGameOverStatus()
+    this.setState({isGameOver: isGameOver})
   }
 
   render() {
@@ -78,16 +81,25 @@ class App extends Component {
     return (
       <div className="App">
         <h1>しりとり</h1>
+        <p>
+        Player: {this.state.accounts}
+        </p>
+        <p>
           {this.state.history.map((data) => {
-            return <span>{data} → </span>;
-        })}{this.state.inputWord}
+            return <span key={data}>{data} → </span>;
+        })}
+        {
+            this.state.isGameOver ? <span>Game Over</span> : <span>{this.state.inputWord}</span>
+        }
+        </p>
         <form>
-          <label>
-            <input type="text" onChange={e => this.handleGreetingChange(e)} />
+            <input type="text" value={this.state.inputWord} onChange={e => this.handleGreetingChange(e)} />
             <button onClick={this.formSubmitHandler}> 単語を言う </button>
-          </label>
         </form>
+    
+        {this.state.error}
       </div>
+
     );
   }
 }

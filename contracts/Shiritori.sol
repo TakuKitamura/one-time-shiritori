@@ -22,6 +22,10 @@ contract Shiritori is Ownable {
         return _history;
     }
 
+    function getGameOverStatus() external view returns (bool) {
+        return _isGameOver;
+    }
+
     // check shiritori history duplicate element
     function checkDuplicateHistory(string[] memory history, string memory word)
         private
@@ -36,8 +40,6 @@ contract Shiritori is Ownable {
         return false;
     }
 
-    event GameOverEvent(string winner);
-
     event NextTurnEvent(string[] word);
 
     // contract-owner can set shiritori-history only once
@@ -47,7 +49,6 @@ contract Shiritori is Ownable {
             // game over
             if (lastHiraganaIsNN(word) == true) {
                 _isGameOver = true;
-                emit GameOverEvent("Game Over!!!");
                 _history.push(word);
                 emit NextTurnEvent(_history);
                 return;
