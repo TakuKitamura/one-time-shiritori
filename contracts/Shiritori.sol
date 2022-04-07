@@ -39,11 +39,7 @@ contract Shiritori is Ownable {
     event sayNextWordEvent(string word);
 
     // contract-owner can set shiritori-history only once
-    function setFirstWord(string calldata word)
-        external
-        checkGameOver
-        onlyOwner
-    {
+    function setFirstWord(string memory word) external checkGameOver onlyOwner {
         bool isEmptyHistory = _history.length == 0;
         if (isEmptyHistory) {
             emit sayNextWordEvent(word);
@@ -59,11 +55,25 @@ contract Shiritori is Ownable {
         }
     }
 
+    function getLastWord(string[] memory history)
+        private
+        pure
+        returns (string memory)
+    {
+        return history[history.length - 1];
+    }
+
     // update shiritori history
-    function sayNextWord(string calldata word) external checkGameOver {
+    function sayNextWord(string memory word) external checkGameOver {
         bool wordsAreSet = _history.length > 0;
-        if (wordsAreSet) {
-            emit sayNextWordEvent(word);
+
+        string memory beforeWord = getLastWord(_history);
+        string memory beforeWordLast = getLastHiragana(beforeWord);
+        string memory nextWordFirst = getFirstHiragana(word);
+
+        bool haveWordConnection = strEqual(beforeWordLast, nextWordFirst);
+
+        if (wordsAreSet && haveWordConnection) {
 
             // game over
             if (
@@ -81,15 +91,26 @@ contract Shiritori is Ownable {
     // TODO: hiragana validation check
     // slice hiragana string with begin and end index
     function hiraganaSlice(
-        string calldata hiragana,
+        string memory hiragana,
         uint256 begin,
         uint256 end
-    ) private pure returns (string calldata) {
-        bytes calldata hiraganaBytes = bytes(hiragana);
-        return string(hiraganaBytes[begin:end]);
+    ) private pure returns (string memory) {
+        bytes memory a = new bytes(end - begin);
+        for (uint256 i = 0; i < end - begin; i++) {
+            a[i] = bytes(hiragana)[i + begin];
+        }
+        return string(a);
     }
 
-    function getLastHiragana(string calldata word)
+    function getFirstHiragana(string memory word)
+        private
+        pure
+        returns (string memory)
+    {
+        return hiraganaSlice(word, 0, 3);
+    }
+
+    function getLastHiragana(string memory word)
         private
         pure
         returns (string memory)
@@ -107,26 +128,22 @@ contract Shiritori is Ownable {
     }
 
     // check last hiragana is "ん"
-    function lastHiraganaIsNN(string calldata word)
-        private
-        pure
-        returns (bool)
-    {
+    function lastHiraganaIsNN(string memory word) private pure returns (bool) {
         string memory lastHiragana = getLastHiragana(word);
         return strEqual(lastHiragana, unicode"ん");
     }
 
     // TODO: MUST comment out this function for testing purposes only when deploying
     function hiraganaSliceTest(
-        string calldata hiragana,
+        string memory hiragana,
         uint256 begin,
         uint256 end
-    ) external pure returns (string calldata) {
+    ) external pure returns (string memory) {
         return hiraganaSlice(hiragana, begin, end);
     }
 
     // TODO: MUST comment out this function for testing purposes only when deploying
-    function getLastHiraganaTest(string calldata word)
+    function getLastHiraganaTest(string memory word)
         external
         pure
         returns (string memory)
