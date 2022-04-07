@@ -84,18 +84,16 @@ contract("receive event", (accounts) => {
     it("receive say next word event", async () => {
         const shiritori = await Shiritori.deployed()
         const firstWord = "しりとり";
-        await shiritori.setFirstWord(firstWord, {
-            from: accounts[0]
-        });
-        const transaction = await shiritori.sayNextWord("りんご", {
-            from: accounts[1]
-        });
-        const history = await shiritori.getHistory({
+        const setWordTx = await shiritori.setFirstWord(firstWord, {
             from: accounts[0]
         });
 
-        console.log(history);
-        assert.equal(transaction.logs[0].args[0], "りんご", "event is not received");
+        assert.equal(setWordTx.logs[0].args[0], "しりとり", "event is not received");
+        const sayNextTx = await shiritori.sayNextWord("りんご", {
+            from: accounts[1]
+        });
+
+        assert.equal(sayNextTx.logs[0].args[0], "しりとり,りんご", "event is not received");
     })
 });
 

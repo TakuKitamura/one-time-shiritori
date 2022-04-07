@@ -36,22 +36,25 @@ contract Shiritori is Ownable {
         return false;
     }
 
-    event sayNextWordEvent(string word);
+    event GameOverEvent(string winner);
+
+    event NextTurnEvent(string[] word);
 
     // contract-owner can set shiritori-history only once
     function setFirstWord(string memory word) external checkGameOver onlyOwner {
         bool isEmptyHistory = _history.length == 0;
         if (isEmptyHistory) {
-            emit sayNextWordEvent(word);
-
             // game over
             if (lastHiraganaIsNN(word) == true) {
                 _isGameOver = true;
+                emit GameOverEvent("Game Over!!!");
                 _history.push(word);
+                emit NextTurnEvent(_history);
                 return;
             }
             // set first word on storage
             _history.push(word);
+            emit NextTurnEvent(_history);
         }
     }
 
@@ -83,7 +86,6 @@ contract Shiritori is Ownable {
         bool haveWordConnection = strEqual(beforeWordLast, nextWordFirst);
 
         if (wordsAreSet && haveWordConnection) {
-            emit sayNextWordEvent(word);
             // game over
             if (
                 lastHiraganaIsNN(word) == true ||
@@ -91,9 +93,11 @@ contract Shiritori is Ownable {
             ) {
                 _isGameOver = true;
                 _history.push(word);
+                emit NextTurnEvent(_history);
                 return;
             }
             _history.push(word);
+            emit NextTurnEvent(_history);
         }
     }
 
