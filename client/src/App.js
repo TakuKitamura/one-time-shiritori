@@ -5,7 +5,7 @@ import getWeb3 from "./utils/getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { greeting: '', word: [], web3: null, accounts: null, contract: null };
+  state = { history: [123], inputWord:'', web3: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
@@ -23,9 +23,11 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
+
+
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({  web3, accounts, contract: instance }, this.setShiritoriHisory);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -35,47 +37,38 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
+  setShiritoriHisory = async () => {
     const { accounts, contract } = this.state;
+    const history = await contract.methods.getHistory().call()
+    this.setState({history: history})
     console.log(contract.events);
     contract.events.allEvents({}, (err, event) => {
         console.log(`event called: ${event.event}`);
         console.log(JSON.stringify(event, null, "    "));
     });
-    // const response = await contract.methods.getHistory().call()
-
-    // this.setState({ greeting: response });
   };
 
   handleGreetingChange = (e) => {
     const inputVal = e.target.value
-    this.setState({ greeting: inputVal })
+    this.setState({ inputWord: inputVal })
   }
 
   formSubmitHandler = async (e) => {
     e.preventDefault();
-    const { accounts, contract, greeting } = this.state;
-    // console.log(accounts, contract, greeting, contract.methods.setGreeting)
+    const { accounts, contract, word } = this.state;
+    // console.log(accounts, contract, word, contract.methods.setGreeting)
 
     const history = await contract.methods.getHistory().call()
     if (history.length === 0){
-        const updatedWord = await contract.methods.setFirstWord(greeting).send({from: accounts[0]});
+        const updatedWord = await contract.methods.setFirstWord(word).send({from: accounts[0]});
         const history = await contract.methods.getHistory().call()
-        this.setState({ word: history })
+        this.setState({ history: history })
         
     } else {
-        const updatedWord = await contract.methods.sayNextWord(greeting).send({from: accounts[0]});
+        const updatedWord = await contract.methods.sayNextWord(word).send({from: accounts[0]});
         const history = await contract.methods.getHistory().call()
-        this.setState({ word: history })
+        this.setState({ history: history })
     }
-  }
-
-   getHistory = async (e) => {
-    e.preventDefault();
-    const { accounts, contract, greeting } = this.state;
-    // console.log(accounts, contract, greeting, contract.methods.getHistory)
-    const history = await contract.methods.getHistory().call()
-    this.setState({ word: history });
   }
 
   render() {
@@ -85,18 +78,15 @@ class App extends Component {
     return (
       <div className="App">
         <h1>しりとり</h1>
-
+          {this.state.history.map((data) => {
+            return <span>{data} → </span>;
+        })}{this.state.inputWord}
         <form>
           <label>
-            <input type="text" value={this.state.greeting} onChange={e => this.handleGreetingChange(e)} />
+            <input type="text" onChange={e => this.handleGreetingChange(e)} />
             <button onClick={this.formSubmitHandler}> 単語を言う </button>
-            <button onClick={this.getHistory}>しりとり履歴</button>
-            {this.state.word}
           </label>
         </form>
-
-
-
       </div>
     );
   }
