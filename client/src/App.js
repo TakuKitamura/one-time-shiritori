@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ShiritoriContract from "./contracts/Shiritori.json";
 import getWeb3 from "./utils/getWeb3";
-import overview from './overview.jpg';
+import overview from './overview.png';
 
 
 import "./App.css";
