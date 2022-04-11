@@ -6,7 +6,7 @@ import "openzeppelin-solidity/contracts/access/Ownable.sol";
 contract Shiritori is Ownable {
     string[] private _history;
     bool private _isGameOver = false;
-
+    
     modifier checkGameOver() {
         require(_isGameOver == false, "Game Over!");
         _;

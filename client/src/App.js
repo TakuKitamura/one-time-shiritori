@@ -7,7 +7,7 @@ import overview from './overview.jpg';
 import "./App.css";
 
 class App extends Component {
-  state = { history: [], inputWord:'', isGameOver: false, web3: null, accounts: null, contract: null, error: '' };
+  state = { history: [], inputWord:'', isGameOver: false, web3: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
@@ -86,13 +86,19 @@ class App extends Component {
       <div className="App">
         <img width="70%" src={overview} alt="overview" />
         <p>
-        Player: {this.state.accounts}
+        
+        Player: {
+        // connected wallet address 
+        this.state.accounts
+        }
         </p>
         <h2>
           {this.state.history.map((data) => {
+            // shiritori history
             return <span key={data}>{data} → </span>;
         })}
         {
+            // game over status
             this.state.isGameOver ? <span>Game Over</span> : <span>{this.state.inputWord}</span>
         }
         </h2>
@@ -100,8 +106,6 @@ class App extends Component {
             <input type="text" value={this.state.inputWord} onChange={e => this.handleGreetingChange(e)} />
             <button onClick={this.formSubmitHandler}> 単語を言う </button>
         </form>
-    
-        {this.state.error}
       </div>
 
     );
