@@ -50,6 +50,8 @@ class App extends Component {
     const history = await contract.methods.getHistory().call()
     const isGameOver = await this.getGameOverStatus()
     this.setState({history: history, isGameOver: isGameOver})
+
+    // receive nextTurnEvent
     contract.events.NextTurnEvent({}, (err, event) => {
         this.setState({history: event['returnValues']['word'], inputWord:''})
     });
