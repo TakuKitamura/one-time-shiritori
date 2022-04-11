@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import GreeterContract from "./contracts/Shiritori.json";
 import getWeb3 from "./utils/getWeb3";
+import overview from './overview.jpg';
+
 
 import "./App.css";
 
@@ -80,18 +82,18 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>しりとり</h1>
+        <img width="70%" src={overview} alt="overview" />
         <p>
         Player: {this.state.accounts}
         </p>
-        <p>
+        <h2>
           {this.state.history.map((data) => {
             return <span key={data}>{data} → </span>;
         })}
         {
             this.state.isGameOver ? <span>Game Over</span> : <span>{this.state.inputWord}</span>
         }
-        </p>
+        </h2>
         <form>
             <input type="text" value={this.state.inputWord} onChange={e => this.handleGreetingChange(e)} />
             <button onClick={this.formSubmitHandler}> 単語を言う </button>
