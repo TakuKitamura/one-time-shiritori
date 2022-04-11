@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import GreeterContract from "./contracts/Shiritori.json";
+import ShiritoriContract from "./contracts/Shiritori.json";
 import getWeb3 from "./utils/getWeb3";
 import overview from './overview.jpg';
 
@@ -19,9 +19,9 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = GreeterContract.networks[networkId];
+      const deployedNetwork = ShiritoriContract.networks[networkId];
       const instance = new web3.eth.Contract(
-        GreeterContract.abi,
+        ShiritoriContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
@@ -57,7 +57,7 @@ class App extends Component {
     });
   };
 
-  handleGreetingChange = (e) => {
+  handleWordChange = (e) => {
     const inputVal = e.target.value
     this.setState({ inputWord: inputVal })
   }
@@ -103,7 +103,7 @@ class App extends Component {
         }
         </h2>
         <form>
-            <input type="text" value={this.state.inputWord} onChange={e => this.handleGreetingChange(e)} />
+            <input type="text" value={this.state.inputWord} onChange={e => this.handleWordChange(e)} />
             <button onClick={this.formSubmitHandler}> 単語を言う </button>
         </form>
       </div>
